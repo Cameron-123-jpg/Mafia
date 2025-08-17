@@ -50,7 +50,6 @@ public class Game {
         sheriffCount = 0;
         townsFolkCount = 0;
 
-        // Create players with unique names
         for (int i = 0; i < numPlayers; i++) {
             String name;
             if (nameChoice.equals("yes")) {
@@ -62,34 +61,31 @@ public class Game {
             players.add(new Player(name, "Townsfolk"));
         }
 
-        // Assign roles
         totalMafiaAllowed = (int) Math.floor(numPlayers / 4.0);
         List<Integer> availableIndices = new ArrayList<>();
         for (int i = 0; i < numPlayers; i++) availableIndices.add(i);
 
         if (specialRoles.equals("yes")) {
-            // Assign Mafia
             for (int i = 0; i < totalMafiaAllowed && !availableIndices.isEmpty(); i++) {
                 int idx = availableIndices.remove(random.nextInt(availableIndices.size()));
                 players.get(idx).setRole("Mafia");
                 mafiaCount++;
             }
-            // Assign Doctor
+
             if (!availableIndices.isEmpty()) {
                 int idx = availableIndices.remove(random.nextInt(availableIndices.size()));
                 players.get(idx).setRole("Doctor");
                 doctorCount++;
             }
-            // Assign Sheriff
+
             if (!availableIndices.isEmpty()) {
                 int idx = availableIndices.remove(random.nextInt(availableIndices.size()));
                 players.get(idx).setRole("Sheriff");
                 sheriffCount++;
             }
-            // Remaining are Townsfolk
+
             townsFolkCount = availableIndices.size();
         } else {
-            // Only Mafia and Townsfolk
             for (int i = 0; i < totalMafiaAllowed && !availableIndices.isEmpty(); i++) {
                 int idx = availableIndices.remove(random.nextInt(availableIndices.size()));
                 players.get(idx).setRole("Mafia");
@@ -97,8 +93,6 @@ public class Game {
             }
             townsFolkCount = availableIndices.size();
         }
-
-        // Print role counts
         if (specialRoles.equals("yes")) {
             System.out.println("Mafia: " + mafiaCount + ", Sheriff: " + sheriffCount + ", Doctor: " + doctorCount + ", Townsfolk: " + townsFolkCount);
         } else {
@@ -106,7 +100,7 @@ public class Game {
         }
     }
 
-    // This section is used to set roles to players
+    // This section is used to set roles to players, could probably be optimized more as it checks again if role counts are the same
     public static void roleSetup(Player player, int numPlayers) {
         if (specialRoles.equals("yes")) {
             totalMafiaAllowed = (int) Math.floor(numPlayers / 4.0);
@@ -154,12 +148,14 @@ public class Game {
 
     }
 
-    // Utility Section
+    // Utility Section, adding things that might be useful later
+    //Clears screen but doesn't remove previous console output
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
+    //Prints all players and their roles, useful for testing
     public void printPlayers() {
         for (Player player : players) {
             System.out.println("Player Name: " + player.getName() + ", Role: " + player.getRole());
