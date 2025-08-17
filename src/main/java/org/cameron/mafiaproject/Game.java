@@ -93,10 +93,33 @@ public class Game {
             }
             townsFolkCount = availableIndices.size();
         }
-        if (specialRoles.equals("yes")) {
-            System.out.println("Mafia: " + mafiaCount + ", Sheriff: " + sheriffCount + ", Doctor: " + doctorCount + ", Townsfolk: " + townsFolkCount);
-        } else {
-            System.out.println("Mafia: " + mafiaCount + ", Townsfolk: " + townsFolkCount);
+
+        //Passing laptop and sharing the roles
+        clearScreen();
+        System.out.println("Please hand the device to each player to view their role.");
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
+        clearScreen();
+        for (Player player : players) {
+            System.out.println(player.getName() + ", your role is: " + player.getRole());
+            System.out.println("Press Enter and hand the device to the next player...");
+            scanner.nextLine();
+            clearScreen();
+            System.out.println("Press Enter to continue...");
+            scanner.nextLine();
+            clearScreen();
+        }
+        //Final check before game starts
+        System.out.println("All players have been assigned roles.");
+        System.out.println("Please confirm that the amount of roles assigned is correct. The mafia should be 1/4 of players rounded down and there's only one of special roles.");
+        String roleConfirmation = scanner.nextLine().trim().toLowerCase();
+        if (!roleConfirmation.equals("yes")) {
+            System.out.println("Game Cancelled, please restart");
+        }
+        else {
+            System.out.println("Roles confirmed. Starting the game...");
+            loadingScreen();
+            round();
         }
     }
 
@@ -145,7 +168,50 @@ public class Game {
                 }
             }
         }
+    }
 
+    public static void round(){
+        while (townsFolkCount > mafiaCount && mafiaCount > 0) {
+            // Night Phase
+            System.out.println("Night has fallen. Mafia, choose your target.");
+            // Mafia chooses a target (implementation needed)
+            System.out.println("Mafia have chosen their target.");
+
+            if (doctorCount > 0) {
+                System.out.println("Doctor, choose someone to save.");
+                // Doctor chooses someone to save (implementation needed)
+                System.out.println("Doctor has made their choice.");
+            }
+
+            if (sheriffCount > 0) {
+                System.out.println("Sheriff, choose someone to investigate.");
+                // Sheriff investigates someone (implementation needed)
+                System.out.println("Sheriff has made their choice.");
+            }
+
+            // Resolve night actions (implementation needed)
+            System.out.println("Night actions have been resolved.");
+
+            // Day Phase
+            System.out.println("Day has dawned. Discuss and vote to eliminate a suspect.");
+            // Players discuss and vote (implementation needed)
+            System.out.println("Voting has concluded.");
+
+            // Resolve voting results (implementation needed)
+            System.out.println("Voting results have been resolved.");
+
+            // Update counts and check win conditions
+            // (implementation needed)
+
+            // For demonstration purposes, we'll break the loop here
+            break; // Remove this in actual implementation
+        }
+        if (mafiaCount == 0) {
+            System.out.println("Townsfolk win!");
+        } else if (townsFolkCount <= mafiaCount) {
+            System.out.println("Mafia win!");
+        }
+        System.out.println("Game over. Thanks for playing!");
     }
 
     // Utility Section, adding things that might be useful later
@@ -160,5 +226,21 @@ public class Game {
         for (Player player : players) {
             System.out.println("Player Name: " + player.getName() + ", Role: " + player.getRole());
         }
+    }
+
+    //Simple loading screen for starting game
+    public static void loadingScreen() {
+        System.out.println("Loading");
+        try {
+            for (int i = 0; i < 5; i++) {
+                Thread.sleep(500);
+                System.out.print(".");
+            }
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        clearScreen();
+        System.out.println("Game Started!");
     }
 }
