@@ -121,7 +121,7 @@ public class Game {
 
     }
 
-    //Currently, has the outline of a round but needs the actual implementation
+    // Currently, has the outline of a round but needs the actual implementation
     public static void round() {
         while (townsFolkCount + doctorCount + sheriffCount > mafiaCount && mafiaCount > 0) {
             String savedPlayer;
@@ -133,8 +133,7 @@ public class Game {
             if (doctorCount > 0) {
                 savedPlayer = doctorVote();
                 System.out.println("Doctor has made their choice.");
-            }
-            else {
+            } else {
                 savedPlayer = null;
             }
 
@@ -143,11 +142,15 @@ public class Game {
                 System.out.println("Sheriff has made their choice.");
             }
             System.out.println("Night actions have been resolved.");
-            
-            mafiaKill(mafiaTarget, savedPlayer);
 
-            System.out.println("Day has dawned. Discuss and vote to eliminate a suspect.");
-            townVote();
+            mafiaKill(mafiaTarget, savedPlayer);
+            if (mafiaCount >= townsFolkCount + sheriffCount + doctorCount) {
+                System.out.println("The mafia have outnumbered the townsfolk and special roles. The game ends here.");
+                break;
+            } else {
+                System.out.println("Day has dawned. Discuss and vote to eliminate a suspect.");
+                townVote();
+            }
         }
         if (mafiaCount == 0) {
             System.out.println("Townsfolk win!");
@@ -155,10 +158,10 @@ public class Game {
             System.out.println("Mafia win!");
         }
         System.out.println("Game over. Thanks for playing!");
-        
+
     }
 
-    public static String mafiaVote(){
+    public static String mafiaVote() {
         System.out.println("Mafia, choose your target: ");
         printPlayers();
         String target = scanner.nextLine().trim();
@@ -166,7 +169,7 @@ public class Game {
         return target;
     }
 
-    public static String doctorVote(){
+    public static String doctorVote() {
         System.out.println("Doctor, choose someone to save: ");
         printPlayers();
         String target = scanner.nextLine().trim();
@@ -174,7 +177,7 @@ public class Game {
         return target;
     }
 
-    public static void sheriffVote(){
+    public static void sheriffVote() {
         System.out.println("Sheriff choose someone to investigate: ");
         printPlayers();
         String target = scanner.nextLine().trim();
@@ -184,11 +187,11 @@ public class Game {
                 System.out.println("The role of " + target + " is: " + player.getRole());
             }
         }
-        scanner.nextLine(); 
+        scanner.nextLine();
         clearScreen();
     }
 
-    public static void mafiaKill(String mafiaTarget, String savedPlayer){
+    public static void mafiaKill(String mafiaTarget, String savedPlayer) {
         if (savedPlayer != null && mafiaTarget.equals(savedPlayer)) {
             System.out.println("The doctor has saved " + savedPlayer + " from the mafia's attack.");
         } else {
