@@ -6,7 +6,6 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
-
     private static final Scanner scanner = new Scanner(System.in);
     private static final Random random = new Random();
     private static String specialRoles;
@@ -22,12 +21,9 @@ public class Game {
         System.out.print("Enter number of players:");
         int numPlayers = scanner.nextInt();
         scanner.nextLine();
-
         System.out.println("Would you like special roles? It's advisable you have at least 6 people... (yes/no)");
         specialRoles = scanner.nextLine().trim().toLowerCase();
-
         playerSetup(numPlayers);
-
     }
 
     public static void playerSetup(int numPlayers) {
@@ -63,7 +59,8 @@ public class Game {
 
         totalMafiaAllowed = (int) Math.floor(numPlayers / 4.0);
         List<Integer> availableIndices = new ArrayList<>();
-        for (int i = 0; i < numPlayers; i++) availableIndices.add(i);
+        for (int i = 0; i < numPlayers; i++)
+            availableIndices.add(i);
 
         if (specialRoles.equals("yes")) {
             for (int i = 0; i < totalMafiaAllowed && !availableIndices.isEmpty(); i++) {
@@ -94,7 +91,7 @@ public class Game {
             townsFolkCount = availableIndices.size();
         }
 
-        //Passing laptop and sharing the roles
+        // Passing laptop and sharing the roles
         clearScreen();
         System.out.println("Please hand the device to each player to view their role.");
         System.out.println("Press Enter to continue...");
@@ -109,21 +106,23 @@ public class Game {
             scanner.nextLine();
             clearScreen();
         }
-        //Final check before game starts
+        // Final check before game starts
         System.out.println("All players have been assigned roles.");
-        System.out.println("Please confirm that the amount of roles assigned is correct. The mafia should be 1/4 of players rounded down and there's only one of special roles.");
+        System.out.println(
+                "Please confirm that the amount of roles assigned is correct. The mafia should be 1/4 of players rounded down and there's only one of special roles.");
         String roleConfirmation = scanner.nextLine().trim().toLowerCase();
         if (!roleConfirmation.equals("yes")) {
             System.out.println("Game Cancelled, please restart");
-        }
-        else {
+        } else {
             System.out.println("Roles confirmed. Starting the game...");
             loadingScreen();
             round();
         }
+
     }
 
-    // This section is used to set roles to players, could probably be optimized more as it checks again if role counts are the same
+    // This section is used to set roles to players, could probably be optimized
+    // more as it checks again if role counts are the same
     public static void roleSetup(Player player, int numPlayers) {
         if (specialRoles.equals("yes")) {
             totalMafiaAllowed = (int) Math.floor(numPlayers / 4.0);
@@ -170,41 +169,25 @@ public class Game {
         }
     }
 
-    public static void round(){
+    //Currently, has the outline of round but needs the actual implementation
+    public static void round() {
         while (townsFolkCount > mafiaCount && mafiaCount > 0) {
-            // Night Phase
             System.out.println("Night has fallen. Mafia, choose your target.");
-            // Mafia chooses a target (implementation needed)
             System.out.println("Mafia have chosen their target.");
 
             if (doctorCount > 0) {
                 System.out.println("Doctor, choose someone to save.");
-                // Doctor chooses someone to save (implementation needed)
                 System.out.println("Doctor has made their choice.");
             }
 
             if (sheriffCount > 0) {
                 System.out.println("Sheriff, choose someone to investigate.");
-                // Sheriff investigates someone (implementation needed)
                 System.out.println("Sheriff has made their choice.");
             }
-
-            // Resolve night actions (implementation needed)
             System.out.println("Night actions have been resolved.");
-
-            // Day Phase
             System.out.println("Day has dawned. Discuss and vote to eliminate a suspect.");
-            // Players discuss and vote (implementation needed)
             System.out.println("Voting has concluded.");
-
-            // Resolve voting results (implementation needed)
             System.out.println("Voting results have been resolved.");
-
-            // Update counts and check win conditions
-            // (implementation needed)
-
-            // For demonstration purposes, we'll break the loop here
-            break; // Remove this in actual implementation
         }
         if (mafiaCount == 0) {
             System.out.println("Townsfolk win!");
@@ -215,20 +198,20 @@ public class Game {
     }
 
     // Utility Section, adding things that might be useful later
-    //Clears screen but doesn't remove previous console output
+    // Clears screen but doesn't remove previous console output
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
-    //Prints all players and their roles, useful for testing
+    // Prints all players and their roles, useful for testing
     public void printPlayers() {
         for (Player player : players) {
-            System.out.println("Player Name: " + player.getName() + ", Role: " + player.getRole());
+            System.out.println("Player Name: " + player.getName());
         }
     }
 
-    //Simple loading screen for starting game
+    // Simple loading screen for starting game
     public static void loadingScreen() {
         System.out.println("Loading");
         try {
