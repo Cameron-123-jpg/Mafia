@@ -147,8 +147,7 @@ public class Game {
             mafiaKill(mafiaTarget, savedPlayer);
 
             System.out.println("Day has dawned. Discuss and vote to eliminate a suspect.");
-            System.out.println("Voting has concluded.");
-            System.out.println("Voting results have been resolved.");
+            townVote();
         }
         if (mafiaCount == 0) {
             System.out.println("Townsfolk win!");
@@ -185,7 +184,7 @@ public class Game {
                 System.out.println("The role of " + target + " is: " + player.getRole());
             }
         }
-        scanner.nextLine(); // Wait for user to press Enter
+        scanner.nextLine(); 
         clearScreen();
     }
 
@@ -210,6 +209,27 @@ public class Game {
             }
             if (targetPlayer != null) {
                 players.remove(targetPlayer);
+            }
+        }
+    }
+
+    public static void townVote() {
+        System.out.println("Townsfolk, discuss and vote to eliminate a suspect.");
+        printPlayers();
+        System.out.println("Enter the name of the player you want to vote out:");
+        String target = scanner.nextLine().trim();
+        for (Player player : players) {
+            if (player.getName().equalsIgnoreCase(target)) {
+                System.out.println("You have voted to eliminate: " + target);
+                player.setAlive(false);
+                switch (player.getRole()) {
+                    case "Mafia" -> mafiaCount--;
+                    case "Doctor" -> doctorCount--;
+                    case "Sheriff" -> sheriffCount--;
+                    default -> townsFolkCount--;
+                }
+                players.remove(player);
+                break;
             }
         }
     }
