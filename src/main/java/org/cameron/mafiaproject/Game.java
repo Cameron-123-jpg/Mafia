@@ -121,70 +121,31 @@ public class Game {
 
     }
 
-    // This section is used to set roles to players, could probably be optimized
-    // more as it checks again if role counts are the same
-    public static void roleSetup(Player player, int numPlayers) {
-        if (specialRoles.equals("yes")) {
-            totalMafiaAllowed = (int) Math.floor(numPlayers / 4.0);
-            int randomNumber = random.nextInt(numPlayers);
-            switch (randomNumber) {
-                case 0 -> {
-                    if (mafiaCount < totalMafiaAllowed) {
-                        player.setRole("Mafia");
-                        mafiaCount++;
-                    }
-                }
-                case 1 -> {
-                    if (doctorCount < 1) {
-                        player.setRole("Doctor");
-                        doctorCount++;
-                    }
-                }
-                case 2 -> {
-                    if (sheriffCount < 1) {
-                        player.setRole("Sheriff");
-                        sheriffCount++;
-                    }
-                }
-                default -> {
-                    player.setRole("Townsfolk");
-                    townsFolkCount++;
-                }
-            }
-        } else {
-            totalMafiaAllowed = (int) Math.floor(numPlayers / 4.0);
-            int randomNumber = random.nextInt(numPlayers);
-            switch (randomNumber) {
-                case 0 -> {
-                    if (mafiaCount < totalMafiaAllowed) {
-                        player.setRole("Mafia");
-                        mafiaCount++;
-                    }
-                }
-                default -> {
-                    player.setRole("Townsfolk");
-                    townsFolkCount++;
-                }
-            }
-        }
-    }
-
-    //Currently, has the outline of round but needs the actual implementation
+    //Currently, has the outline of a round but needs the actual implementation
     public static void round() {
-        while (townsFolkCount > mafiaCount && mafiaCount > 0) {
-            System.out.println("Night has fallen. Mafia, choose your target.");
+        while (townsFolkCount + doctorCount + sheriffCount > mafiaCount && mafiaCount > 0) {
+            String savedPlayer;
+            String mafiaTarget;
+            System.out.println("Night has fallen.");
+            mafiaTarget = mafiaVote();
             System.out.println("Mafia have chosen their target.");
 
             if (doctorCount > 0) {
-                System.out.println("Doctor, choose someone to save.");
+                savedPlayer = doctorVote();
                 System.out.println("Doctor has made their choice.");
+            }
+            else {
+                savedPlayer = null;
             }
 
             if (sheriffCount > 0) {
-                System.out.println("Sheriff, choose someone to investigate.");
+                sheriffVote();
                 System.out.println("Sheriff has made their choice.");
             }
             System.out.println("Night actions have been resolved.");
+            
+            mafiaKill(mafiaTarget, savedPlayer);
+
             System.out.println("Day has dawned. Discuss and vote to eliminate a suspect.");
             System.out.println("Voting has concluded.");
             System.out.println("Voting results have been resolved.");
@@ -195,6 +156,62 @@ public class Game {
             System.out.println("Mafia win!");
         }
         System.out.println("Game over. Thanks for playing!");
+        
+    }
+
+    public static String mafiaVote(){
+        System.out.println("Mafia, choose your target: ");
+        printPlayers();
+        String target = scanner.nextLine().trim();
+        clearScreen();
+        return target;
+    }
+
+    public static String doctorVote(){
+        System.out.println("Doctor, choose someone to save: ");
+        printPlayers();
+        String target = scanner.nextLine().trim();
+        clearScreen();
+        return target;
+    }
+
+    public static void sheriffVote(){
+        System.out.println("Sheriff choose someone to investigate: ");
+        printPlayers();
+        String target = scanner.nextLine().trim();
+        System.out.println("Sheriff has chosen to investigate: " + target);
+        for (Player player : players) {
+            if (player.getName().equalsIgnoreCase(target)) {
+                System.out.println("The role of " + target + " is: " + player.getRole());
+            }
+        }
+        scanner.nextLine(); // Wait for user to press Enter
+        clearScreen();
+    }
+
+    public static void mafiaKill(String mafiaTarget, String savedPlayer){
+        if (savedPlayer != null && mafiaTarget.equals(savedPlayer)) {
+            System.out.println("The doctor has saved " + savedPlayer + " from the mafia's attack.");
+        } else {
+            Player targetPlayer = null;
+            for (Player player : players) {
+                if (player.getName().equalsIgnoreCase(mafiaTarget)) {
+                    System.out.println(mafiaTarget + " has been killed by the mafia.");
+                    player.setAlive(false);
+                    switch (player.getRole()) {
+                        case "Mafia" -> mafiaCount--;
+                        case "Doctor" -> doctorCount--;
+                        case "Sheriff" -> sheriffCount--;
+                        default -> townsFolkCount--;
+                    }
+                    targetPlayer = player;
+                    break;
+                }
+            }
+            if (targetPlayer != null) {
+                players.remove(targetPlayer);
+            }
+        }
     }
 
     // Utility Section, adding things that might be useful later
@@ -205,7 +222,7 @@ public class Game {
     }
 
     // Prints all players and their roles, useful for testing
-    public void printPlayers() {
+    public static void printPlayers() {
         for (Player player : players) {
             System.out.println("Player Name: " + player.getName());
         }
